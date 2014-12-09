@@ -44,4 +44,4 @@ Events
 'onSMSArrive'
 
 If you want use this plugin as private project contact us for full version with additional feature and complete API 
-documentation.  https://www.dileepyadav.wordpress.com
+documentation.  http://www.dileepyadav.wordpress.com
