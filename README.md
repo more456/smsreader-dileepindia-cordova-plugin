@@ -17,3 +17,5 @@ You can clone with HTTPS, SSH, or Subversion.
 SMSReader Complete solution on ==> 
 http://www.dileepyadav.wordpress.com
  — 
+If you want use this plugin as corporate contact us for full version with additional feature and complete API 
+documentation.  http://www.dileepyadav.wordpress.com
