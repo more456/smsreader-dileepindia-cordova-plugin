@@ -15,7 +15,10 @@ You can clone with HTTPS, SSH, or Subversion.
 
  Clone in Desktop  Download ZIP
 SMSReader Complete solution on ==> 
+
+
 http://www.dileepyadav.wordpress.com
  — 
-If you want use this plugin as corporate contact us for full version with additional feature and complete API 
-documentation.  http://www.dileepyadav.wordpress.com
+ 
+ 
+Project outsourcing and consulting service is also available. Please [contact us](http://dileepyadav.wordpress.com) if you have the business needs.
