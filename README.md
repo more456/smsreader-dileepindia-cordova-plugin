@@ -1,6 +1,8 @@
 SMSReader-II-Cordova-II-Plugin  for Read SMS from andoid mobile divece with Additional features -
 =================
 
+
+
 DILEEP-YADAV/SMSReader-II-Cordova-II-Plugin
  Code
  Issues 0
@@ -9,7 +11,7 @@ DILEEP-YADAV/SMSReader-II-Cordova-II-Plugin
  Pulse
  Graphs
  Settings
-HTTPS clone URL
+HTTPS clone URL   https://github.com/DILEEP-YADAV/SMSReader-II-Cordova-II-Plugin
 	
 You can clone with HTTPS, SSH, or Subversion. 
 
