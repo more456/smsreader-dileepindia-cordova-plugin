@@ -46,3 +46,4 @@ Events
 If you want use this plugin as private project contact us for full version with additional feature and complete API 
 documentation.  http://www.dileepyadav.wordpress.com  [https://gitorious.org/0xdroid]
 
+https://github.com/floatinghotpot/cordova-plugin-sms/blob/master/docs/README.md
