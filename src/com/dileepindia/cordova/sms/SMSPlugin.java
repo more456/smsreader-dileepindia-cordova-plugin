@@ -1,13 +1,27 @@
  package com.dileepindia.cordova.sms;
  
- import android.annotation.SuppressLint;
+ import java.io.StringWriter;
+import java.lang.reflect.Array;
+import java.sql.Date;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.TimeZone;
+
+import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.PendingIntent;
 import android.app.PendingIntent.CanceledException;
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
@@ -16,13 +30,18 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.Telephony;
 import android.telephony.SmsManager;
 import android.telephony.SmsMessage;
+import android.text.format.DateFormat;
 import android.util.Log;
+import android.util.TimeUtils;
 
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
+
+
+import android.view.Gravity;
+import android.widget.TextView;
 
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaInterface;
@@ -90,13 +109,11 @@ import org.json.JSONObject;
    private String lastFrom = "";
    private String lastContent = "";
    
-   private boolean licenseValidated = false;
+  
 
+  public SMSPlugin() {}
    
-   
-   public SMSPlugin() {}
-   
-   //************************************************  
+ 
    public void onDestroy() 
    
    { 
@@ -105,69 +122,14 @@ import org.json.JSONObject;
 	   
    }
    
-  //***************************************************
-   
-   public void setOptions(JSONObject options)
-   {
-     Log.d("SMSPlugin", "setOptions");
-     
-     if ((options != null) && (options.has("license"))) validateLicense(options.optString("license"));
-   }
-   
-   //*********************************************************************************
-   protected String __getProductShortName()
-   
-       {
-               return "SMS";
-       }
- 
-   //************************************************************************************
-/*     */   @SuppressLint({"DefaultLocale"})
 
-   private void validateLicense(String license) {
-     String[] fields = license.split("/");
-     if (fields.length >= 2) {
-       String userid = fields[0];
-       String key = fields[1];
-       String genKey2 = md5(__getProductShortName() + " licensed to " + userid + " by floatinghotpot");
-       this.licenseValidated = key.equalsIgnoreCase(genKey2);
-     }
-   }
-
-//***************************************************************************************
-   public final String md5(String s) {
-     try {
-       MessageDigest digest = MessageDigest.getInstance("MD5");
-          digest.update(s.getBytes());
-             byte[] messageDigest = digest.digest();
-          StringBuffer hexString = new StringBuffer();
-       for (int i = 0; i < messageDigest.length; i++) {
-               String h = Integer.toHexString(0xFF & messageDigest[i]);
-         while (h.length() < 2)
-           h = "0" + h;
-         hexString.append(h);
-       }
-       return hexString.toString();
-     }
-    catch (NoSuchAlgorithmException localNoSuchAlgorithmException) {}
-     
-     return "";
-   }
-   
- 
-//*********************************************************************************************
- 
    public boolean execute(String action, JSONArray inputs, CallbackContext callbackContext)
      throws JSONException
    {
 	       PluginResult result = null;
    
-     if ("setOptions".equals(action)) {
-       JSONObject options = inputs.optJSONObject(0);
-       setOptions(options);
-       result = new PluginResult(PluginResult.Status.OK);
-     }
-     else if ("startWatch".equals(action)) {
+
+      if ("startWatch".equals(action)) {
        result = startWatch(callbackContext);
      }
      else if ("stopWatch".equals(action)) {
@@ -204,14 +166,14 @@ import org.json.JSONObject;
        Log.d("SMSPlugin", String.format("Invalid action passed: %s", new Object[] { action }));
        result = new PluginResult(PluginResult.Status.INVALID_ACTION);
     }
-    
-     if (!this.licenseValidated) { Log.w("SMSPlugin", "invalid license");
-     }
+  
     if (result != null) { callbackContext.sendPluginResult(result);
      }
      return true;
    }
 
+   
+   
    
    //**********************   IN construction ****************************************************
    private PluginResult sendSMS(String Phone, String messages,String methods,CallbackContext callbackContext) {
@@ -234,6 +196,8 @@ import org.json.JSONObject;
 }
 
    //********************* end **********************************************************************
+   
+   
    
 //****************************************************************************************************
    
@@ -285,46 +249,7 @@ import org.json.JSONObject;
     if (callbackContext != null) callbackContext.success();
      return null;
    }
-  
-   //**************************************************************************************************
-   /*
-   private PluginResult sendSMS(JSONArray addressList, String text, CallbackContext callbackContext) {
-     Log.d("SMSPlugin", "sendSMS");
-     
-     if (this.cordova.getActivity().getPackageManager().hasSystemFeature("android.hardware.telephony")) {
-       int n = addressList.length();
-       if (n > 0) {
-         PendingIntent sentIntent = PendingIntent.getBroadcast(this.cordova.getActivity(), 0, new Intent("SENDING_SMS"), 0);
-         SmsManager sms = SmsManager.getDefault();
-         for (int i = 0; i < n; i++) {
-           String address = addressList.optString(i);
-           if (address.length() > 0) {
-             sms.sendTextMessage(address, null, text, sentIntent, null);
-        }
-       }
-    } else {
-       PendingIntent sentIntent = PendingIntent.getActivity(this.cordova.getActivity(), 0, new Intent("android.intent.action.VIEW"), 0);
-         Intent intent = new Intent("android.intent.action.VIEW");
-        intent.putExtra("sms_body", text);
-         intent.setType("vnd.android-dir/mms-sms");
-        try {
-          sentIntent.send(this.cordova.getActivity().getApplicationContext(), 0, intent);
-     } catch (PendingIntent.CanceledException e) {
-         e.printStackTrace();
-        }
-      }
-       callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.OK, "OK"));
-     }
-   else {
-       callbackContext.sendPluginResult(new PluginResult(PluginResult.Status.ERROR, "SMS is not supported"));
-     }
-    
-    return null;
-   }
-  
-   */
    
-   //***************************************************************************************************************
    
    
    private PluginResult listSMS(JSONObject filter, CallbackContext callbackContext) {
@@ -360,7 +285,10 @@ import org.json.JSONObject;
 		e.printStackTrace();
 	}
     long milli=c1.getTimeInMillis();
-    
+     
+
+ 	
+    //SimpleDateFormat formatter = new SimpleDateFormat("dd/MMM/yyyy");
 
     JSONArray jsons = new JSONArray();
    //Calendar calendar = null;
@@ -372,7 +300,8 @@ import org.json.JSONObject;
 
     
     Cursor cur =ctx.getContentResolver().query(uri, null,"", null,null);
-  
+    //Cursor cur = ctx.getContentResolver().query(uri,new String[] { "_id", "read", "address",  "date", "body" }, null, null, null);
+
     int i = 0;
     while (cur.moveToNext())
       if (i >= indexFrom) {
@@ -401,7 +330,9 @@ import org.json.JSONObject;
       
        else if (milli>0) {
            long dateInMillis = cur.getLong(cur.getColumnIndex("date"));
-         
+            
+    		//long dateInMillis = Long.valueOf(cur.getString(cur.getColumnIndex("date")));
+
             matchFilter = milli <= dateInMillis;           
 	      } 
          
@@ -416,7 +347,9 @@ import org.json.JSONObject;
             }
        
        if (matchFilter) {
-         
+          // HashMap<String, String> temp = new HashMap<String, String>();
+
+        // JSONObject json = getJsonFromCursor(cur);
          JSONObject json = getJsonFromCursor(cur);
  
      if (json == null) {
@@ -439,7 +372,7 @@ import org.json.JSONObject;
      return null;
    }
    
-
+  
    private JSONObject getJsonFromCursor(Cursor cur) {
      JSONObject json = new JSONObject();
    
@@ -467,7 +400,6 @@ import org.json.JSONObject;
    
      return json;
    }
-   
    
    
    //**************************************************************************************************************
@@ -744,10 +676,3 @@ import org.json.JSONObject;
 	    }
 	}
  
- //******************************************
- 
- /* Location:          [India] com.dileepindia.codoava.sms.SMSPlugin
- * Qualified Name:     com.rjfun.cordova.sms.SMSPlugin
- * Java Class Version: 6 (50.0)
- * JD-Core Version:    0.7.0.1
- */
