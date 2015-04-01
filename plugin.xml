@@ -8,7 +8,7 @@
     <name>SMS</name>
 	<description>Plugin to operate SMS, send/list/intercept/delete/restore</description>
 	<author>DILEEP YADAV</author>
-	<license>Apache Cordova</license>
+	<license>MIT</license>
 	<keywords>dileepindia,sms</keywords>
 
 	<engines>
@@ -44,3 +44,4 @@
     </platform>
 
 </plugin>
+
