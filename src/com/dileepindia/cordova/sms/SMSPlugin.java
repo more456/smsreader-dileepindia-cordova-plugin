@@ -251,56 +251,28 @@ import org.json.JSONObject;
    }
    
    
-   
+   //**************************************************************************************************
    private PluginResult listSMS(JSONObject filter, CallbackContext callbackContext) {
      Log.e("SMSPlugin", "listSMS");
 
-     String fdate=null;
+   
      
      String uri_filter = filter.optString("box");
      int fread =filter.optInt("read");
      int fid   =filter.optInt("_id");
      String faddress = filter.optString("address");
      String fcontent = filter.optString("body");
+     long fdate1 = filter.optLong("date");
      int indexFrom = filter.has("indexFrom") ? filter.optInt("indexFrom") : 0;
      int maxCount = filter.has("maxCount") ? filter.optInt("maxCount") :100;
      
-     if(faddress.equals(null))
-     {
-          fdate = filter.optString("date");
-         
-     }
-     
-     System.out.println(fdate);
-     
-     Calendar c1 = Calendar.getInstance(TimeZone.getTimeZone("Asia/Calcutta"));            
-     
-     SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-     sdf.setTimeZone(TimeZone.getTimeZone("UTC"));       
-
-     try {
-		c1.setTime(sdf.parse(fdate));
-	} catch (ParseException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	}
-    long milli=c1.getTimeInMillis();
-     
-
- 	
-    //SimpleDateFormat formatter = new SimpleDateFormat("dd/MMM/yyyy");
-
+    
+ 
     JSONArray jsons = new JSONArray();
-   //Calendar calendar = null;
-   
     Context ctx = this.cordova.getActivity();
-   
     Uri uri = Uri.parse("content://sms/" + uri_filter);
-    
-
-    
     Cursor cur =ctx.getContentResolver().query(uri, null,"", null,null);
-    //Cursor cur = ctx.getContentResolver().query(uri,new String[] { "_id", "read", "address",  "date", "body" }, null, null, null);
+   
 
     int i = 0;
     while (cur.moveToNext())
@@ -328,12 +300,11 @@ import org.json.JSONObject;
            
            }
       
-       else if (milli>0) {
+       else if (fdate1>0) {
+    	   System.out.println(fdate1);
            long dateInMillis = cur.getLong(cur.getColumnIndex("date"));
-            
-    		//long dateInMillis = Long.valueOf(cur.getString(cur.getColumnIndex("date")));
-
-            matchFilter = milli <= dateInMillis;           
+           
+           matchFilter = fdate1 <= dateInMillis;           
 	      } 
          
        else if (fcontent.length() > 0) {
@@ -347,9 +318,7 @@ import org.json.JSONObject;
             }
        
        if (matchFilter) {
-          // HashMap<String, String> temp = new HashMap<String, String>();
-
-        // JSONObject json = getJsonFromCursor(cur);
+      
          JSONObject json = getJsonFromCursor(cur);
  
      if (json == null) {
@@ -372,7 +341,9 @@ import org.json.JSONObject;
      return null;
    }
    
-  
+   
+   
+   
    private JSONObject getJsonFromCursor(Cursor cur) {
      JSONObject json = new JSONObject();
    
@@ -382,14 +353,33 @@ import org.json.JSONObject;
      {
       for (int j = 0; j < nCol; j++) {
        switch (cur.getType(j)) {
-       case Cursor.FIELD_TYPE_BLOB   : json.put(keys[j], cur.getBlob(j).toString()); break;
-       case Cursor.FIELD_TYPE_FLOAT  : json.put(keys[j], cur.getDouble(j))         ; break;
-       case Cursor.FIELD_TYPE_INTEGER: json.put(keys[j], cur.getLong(j))           ; break;
-       case Cursor.FIELD_TYPE_NULL   : json.put(keys[j], cur)                     ; break;
-       case Cursor.FIELD_TYPE_STRING : json.put(keys[j], cur.getString(j))         ; break;
+         /*case 0: 
+                    json.put(keys[j], null);
+                    break;
+         case 1: 
+                    json.put(keys[j], cur.getInt(j));
+                    break;
+           
+         case 2: 
+                    json.put(keys[j], cur.getLong(j));
+                    break;
+         case 3: 
+                    json.put(keys[j], cur.getFloat(j));
+                    break;
+         case 4: 
+                    json.put(keys[j], cur.getString(j));
+                    break;
+          
+         case 5: 
+                    json.put(keys[j], cur.getBlob(j));
+           */         
+         case Cursor.FIELD_TYPE_BLOB   : json.put(keys[j], cur.getBlob(j).toString()); break;
+         case Cursor.FIELD_TYPE_FLOAT  : json.put(keys[j], cur.getDouble(j))         ; break;
+         case Cursor.FIELD_TYPE_INTEGER: json.put(keys[j], cur.getLong(j))           ; break;
+         case Cursor.FIELD_TYPE_NULL   : json.put(keys[j], cur)                     ; break;
+         case Cursor.FIELD_TYPE_STRING : json.put(keys[j], cur.getString(j))         ; break;
          
          
-       
        }
       }
    }
