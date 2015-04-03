@@ -296,7 +296,7 @@ import org.json.JSONObject;
          
        else if (faddress.length() > 0) {
          String address = cur.getString(cur.getColumnIndex("address")).trim();
-     	    matchFilter = address.equals(faddress);
+     	     matchFilter =  address.contains(faddress);
            
            }
       
