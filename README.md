@@ -11,7 +11,7 @@ DILEEP-YADAV/SMSReader-DILEEPIndia-Cordova-Plugin
  Pulse
  Graphs
  Settings
-HTTPS clone URL   https://github.com/SMSReader-DILEEPIndia-Cordova-Plugin
+HTTPS clone URL   https://github.com/DILEEP-YADAV/SMSReader-DILEEPIndia-Cordova-Plugin
 	
 You can clone with HTTPS, SSH, or Subversion. 
 
