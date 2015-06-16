@@ -1,4 +1,4 @@
-SMSReader-II-Cordova-II-Plugin  for Read SMS from andoid mobile divece with Additional features -
+SMSReader-DILEEPIndia-Cordova-Plugin  for Read SMS from andoid mobile divece with Additional features -
 =================
 
 
